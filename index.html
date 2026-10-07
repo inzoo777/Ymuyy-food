@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- Mobile screen support -->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Yummy Food Quiz</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff4d6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
+}
+
+/* Main quiz */
+.quiz-box {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    padding: 20px 15px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+/* Title */
+h1 {
+    color: #ff7a00;
+    font-size: clamp(25px, 7vw, 34px);
+    margin: 5px 0 15px;
+}
+
+/* Food emoji */
+.food {
+    font-size: clamp(65px, 20vw, 100px);
+    margin: 10px 0;
+}
+
+/* Question */
+.question {
+    font-size: clamp(19px, 5vw, 25px);
+    font-weight: bold;
+    margin: 15px 5px;
+}
+
+/* Answer buttons */
+.option {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    margin: 10px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 15px;
+    background: #ffe0a3;
+    font-size: clamp(17px, 4.5vw, 20px);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.option:active {
+    transform: scale(0.98);
+}
+
+.option:hover {
+    background: #ffc45c;
+}
+
+/* Next button */
+#next {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 15px;
+    background: #ff7a00;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Score */
+#score {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* Small phones */
+@media (max-height: 650px) {
+    body {
+        align-items: flex-start;
+        padding-top: 10px;
+    }
+
+    .quiz-box {
+        padding: 12px;
+    }
+
+    .food {
+        margin: 5px 0;
+    }
+
+    .question {
+        margin: 8px 5px;
+    }
+
+    .option {
+        margin: 7px 0;
+        min-height: 45px;
+        padding: 9px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-box">
+
+    <h1>🍕 Yummy Food Quiz 🍎</h1>
+
+    <div id="food" class="food">🍕</div>
+
+    <div id="question" class="question">
+        Which food is this?
+    </div>
+
+    <div id="options"></div>
+
+    <button id="next" onclick="nextQuestion()">
+        Next ➡️
+    </button>
+
+    <p id="score">Score: 0</p>
+
+</div>
+
+<script>
+
+const quiz = [
+    {
+        food: "🍕",
+        question: "Which food is this?",
+        options: ["Pizza", "Apple", "Carrot", "Banana"],
+        answer: "Pizza"
+    },
+    {
+        food: "🍎",
+        question: "Which food is this?",
+        options: ["Cake", "Apple", "Burger", "Ice Cream"],
+        answer: "Apple"
+    },
+    {
+        food: "🍔",
+        question: "Which food is this?",
+        options: ["Burger", "Orange", "Pizza", "Cookie"],
+        answer: "Burger"
+    },
+    {
+        food: "🍌",
+        question: "Which food is this?",
+        options: ["Carrot", "Banana", "Cake", "Pizza"],
+        answer: "Banana"
+    },
+    {
+        food: "🍦",
+        question: "Which food is this?",
+        options: ["Ice Cream", "Apple", "Burger", "Orange"],
+        answer: "Ice Cream"
+    },
+    {
+        food: "🥕",
+        question: "Which food is this?",
+        options: ["Banana", "Carrot", "Pizza", "Cookie"],
+        answer: "Carrot"
+    }
+];
+
+let current = 0;
+let score = 0;
+
+function loadQuestion() {
+
+    document.getElementById("food").innerText =
+        quiz[current].food;
+
+    document.getElementById("question").innerText =
+        quiz[current].question;
+
+    const optionsDiv =
+        document.getElementById("options");
+
+    optionsDiv.innerHTML = "";
+
+    quiz[current].options.forEach(option => {
+
+        const button =
+            document.createElement("button");
+
+        button.className = "option";
+        button.innerText = option;
+
+        button.onclick = function() {
+            checkAnswer(option);
+        };
+
+        optionsDiv.appendChild(button);
+    });
+}
+
+function checkAnswer(selected) {
+
+    if (selected === quiz[current].answer) {
+        score++;
+        alert("🎉 Great job!");
+    } else {
+        alert("😊 Try again!");
+    }
+
+    document.getElementById("score").innerText =
+        "Score: " + score;
+
+    document.querySelectorAll(".option")
+        .forEach(btn => {
+            btn.disabled = true;
+        });
+}
+
+function nextQuestion() {
+
+    current++;
+
+    if (current >= quiz.length) {
+
+        document.querySelector(".quiz-box").innerHTML = `
+            <h1>🎉 Quiz Complete!</h1>
+            <div class="food">🏆</div>
+            <h2>Your Score</h2>
+            <h1>${score} / ${quiz.length}</h1>
+
+            <button id="next"
+                    onclick="location.reload()">
+                🔄 Play Again
+            </button>
+        `;
+
+        return;
+    }
+
+    loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
